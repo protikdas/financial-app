@@ -1,6 +1,10 @@
 import React, { Component } from "react";
-import logo from "./logo.svg";
+import { Switch, Route, Redirect } from "react-router-dom";
 import "./App.less";
+
+/*<----PAGES---->*/
+import SignIn from "./pages/SignIn/SignIn";
+import Dashboard from "./pages/Dashboard/Dashboard";
 
 class App extends Component {
   constructor() {
@@ -9,16 +13,47 @@ class App extends Component {
       isAuthenticated: false
     };
   }
+
+  signin = () => {
+    this.setState({
+      isAuthenticated: true
+    });
+  };
+
+  signout = () => {
+    this.setState({
+      isAuthenticated: false
+    });
+  };
+
   render() {
+    const { isAuthenticated } = this.state;
     return (
       <div className="App">
-        <header className="App-header">
-          <img src={logo} className="App-logo" alt="logo" />
-          <h1 className="App-title">Welcome to React</h1>
-        </header>
-        <p className="App-intro">
-          To get started, edit <code>src/App.js</code> and save to reload.
-        </p>
+        <Switch>
+          <Route
+            exact
+            path="/signin"
+            component={() =>
+              !isAuthenticated ? (
+                <SignIn signin={this.signin} />
+              ) : (
+                <Redirect to="/dashboard" />
+              )
+            }
+          />
+          <Route
+            exact
+            path="/dashboard"
+            component={() =>
+              isAuthenticated ? (
+                <Dashboard signout={this.signout} />
+              ) : (
+                <Redirect to="/signin" />
+              )
+            }
+          />
+        </Switch>
       </div>
     );
   }
